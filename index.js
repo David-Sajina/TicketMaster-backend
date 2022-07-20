@@ -33,7 +33,7 @@ await connectToDB();
 
 app.get("/auth", auth, async (req, res) => {
   try {
-    console.log(req.user);
+    console.log(req.user, "aaaaa");
     res.json(req.user);
   } catch (error) {
     console.log(error);
@@ -69,22 +69,37 @@ app.post(`/register`, async (req, res) => {
   // provjere lozinke / username / mail
 
   try {
-    let user = await User.findOne({ username });
-    if (user)
-      return res.status(400).json({ error: "Username already in use." });
+    let user = await User.findOne({ email });
+    if (user) return res.status(400).json({ error: "email already in use." });
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     user = new User({
       email,
       username,
-      password,
+      password: hashedPassword,
     });
-
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
 
     await user.save();
 
-    res.send(user);
+    const payload = {
+      user: {
+        id: user._id,
+      },
+    };
+    console.log(user);
+    let token = jwt.sign(
+      payload,
+      process.env.SECRET_KEY,
+      {
+        expiresIn: 3600,
+      },
+      (error, token) => {
+        if (error) throw error;
+        res.json({ token });
+      }
+    );
+    console.log(token, "token");
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Server error" });
