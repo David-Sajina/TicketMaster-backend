@@ -33,6 +33,7 @@ await connectToDB();
 
 app.get("/auth", auth, async (req, res) => {
   try {
+    console.log(req.user);
     res.json(req.user);
   } catch (error) {
     console.log(error);
