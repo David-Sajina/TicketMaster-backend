@@ -42,12 +42,14 @@ app.get("/auth", auth, async (req, res) => {
 });
 
 app.post(`/ticket`, async (req, res) => {
-  const { name, location, start } = req.body;
+  const { name, location, start, question, answer } = req.body;
   try {
     let newTicket = new TicketHeader({
       name,
       location,
       start,
+      question,
+      answer,
     });
     await newTicket.save();
     console.log(newTicket);
