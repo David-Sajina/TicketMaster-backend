@@ -29,7 +29,8 @@ const TicketHeaderSchema = new mongoose.Schema(
 	},
 	{
 		timestamps: true,
-	}
+	},
+	{ typeKey: "$type" }
 );
 
 const TicketHeader = mongoose.model("ticketheader", TicketHeaderSchema);

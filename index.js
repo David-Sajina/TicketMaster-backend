@@ -65,6 +65,16 @@ app.get(`/ticket`, auth, async (req, res) => {
 		res.send(tickets);
 	} catch (error) {}
 });
+app.get(`/questions/:user`, async (req, res) => {
+	try {
+		console.log(req.params);
+		let questions = await TicketHeader.find({ user: req.params.user });
+		res.send(questions);
+		console.log(questions);
+	} catch (error) {
+		console.log(error);
+	}
+});
 
 app.post(`/`, (req, res) => {
 	const { username, password } = req.body;
