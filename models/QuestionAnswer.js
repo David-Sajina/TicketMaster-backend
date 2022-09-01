@@ -1,21 +1,17 @@
 import mongoose from "mongoose";
 
-const TicketHeaderSchema = new mongoose.Schema(
+const QuestionAnswerSchema = new mongoose.Schema(
   {
     user: {
       type: String,
       required: true,
     },
-    name: {
+    question: {
       type: String,
       required: true,
     },
-    location: {
+    answer: {
       type: String,
-      required: true,
-    },
-    start: {
-      type: Date,
       required: true,
     },
   },
@@ -25,6 +21,6 @@ const TicketHeaderSchema = new mongoose.Schema(
   { typeKey: "$type" }
 );
 
-const TicketHeader = mongoose.model("ticketheader", TicketHeaderSchema);
+const QuestionAnswer = mongoose.model("questionanswer", QuestionAnswerSchema);
 
-export default TicketHeader;
+export default QuestionAnswer;

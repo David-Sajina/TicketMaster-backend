@@ -7,6 +7,7 @@ import User from "./models/User.js";
 import jwt from "jsonwebtoken";
 import auth from "./authMiddleware.js";
 import TicketHeader from "./models/TicketHeader.js";
+import QuestionAnswer from "./models/QuestionAnswer.js";
 
 dotenv.config();
 
@@ -42,15 +43,13 @@ app.get("/auth", auth, async (req, res) => {
 });
 
 app.post(`/ticket`, async (req, res) => {
-  const { user, name, location, start, question, answer } = req.body;
+  const { user, name, location, start } = req.body;
   try {
     let newTicket = new TicketHeader({
-      user,
+      user: user.email,
       name,
       location,
       start,
-      question,
-      answer,
     });
     await newTicket.save();
     console.log(newTicket);
@@ -59,12 +58,37 @@ app.post(`/ticket`, async (req, res) => {
   }
   res.send("OK");
 });
+
+app.post(`/questionanswer`, async (req, res) => {
+  const { user, question, answer } = req.body;
+  try {
+    let newQuestionAnswer = new QuestionAnswer({
+      user,
+      question,
+      answer,
+    });
+    await newQuestionAnswer.save();
+    console.log(newQuestionAnswer);
+  } catch (error) {
+    console.log(error);
+  }
+  res.send("OK");
+});
+
 app.get(`/ticket`, auth, async (req, res) => {
   try {
-    let tickets = await TicketHeader.find({ user: req.user.email });
+    let tickets = await TicketHeader.findOne({ user: req.user.email });
     res.send(tickets);
   } catch (error) {}
 });
+
+app.get(`/questionanswer`, auth, async (req, res) => {
+  try {
+    let questionanswer = await QuestionAnswer.find({ user: req.user.email });
+    res.send(questionanswer);
+  } catch (error) {}
+});
+
 app.get(`/questions/:user`, async (req, res) => {
   try {
     console.log(req.params);
@@ -85,6 +109,29 @@ app.patch(`/ticket/:id`, async (req, res) => {
     QandA.answer = newAnswer;
     await QandA.save();
   } catch (error) {}
+});
+
+app.patch("/ticket-info/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name, location, start } = req.body;
+
+  console.log("saving");
+  try {
+    const headerTicket = await TicketHeader.findById(id);
+
+    if (!headerTicket) {
+      return res.status(400).json({ msg: "Not found" });
+    }
+
+    if (name) headerTicket.name = name;
+    if (location) headerTicket.location = location;
+    if (start) headerTicket.start = start;
+    await headerTicket.save();
+
+    return res.status(200).json(headerTicket);
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 app.delete(`/ticket/:id`, async (req, res) => {
