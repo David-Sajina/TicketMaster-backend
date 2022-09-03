@@ -14,10 +14,6 @@ const TicketHeaderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    start: {
-      type: Date,
-      required: true,
-    },
   },
   {
     timestamps: true,

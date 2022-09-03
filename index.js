@@ -43,13 +43,12 @@ app.get("/auth", auth, async (req, res) => {
 });
 
 app.post(`/ticket`, async (req, res) => {
-  const { user, name, location, start } = req.body;
+  const { user, name, location } = req.body;
   try {
     let newTicket = new TicketHeader({
       user: user.email,
       name,
       location,
-      start,
     });
     await newTicket.save();
     console.log(newTicket);
@@ -104,7 +103,7 @@ app.patch(`/ticket/:id`, async (req, res) => {
   const { newQuestion, newAnswer } = req.body;
   try {
     const id = req.params.id;
-    let QandA = await TicketHeader.findOne({ _id: id });
+    let QandA = await QuestionAnswer.findOne({ _id: id });
     QandA.question = newQuestion;
     QandA.answer = newAnswer;
     await QandA.save();
@@ -113,7 +112,7 @@ app.patch(`/ticket/:id`, async (req, res) => {
 
 app.patch("/ticket-info/:id", async (req, res) => {
   const { id } = req.params;
-  const { name, location, start } = req.body;
+  const { name, location } = req.body;
 
   console.log("saving");
   try {
@@ -125,7 +124,6 @@ app.patch("/ticket-info/:id", async (req, res) => {
 
     if (name) headerTicket.name = name;
     if (location) headerTicket.location = location;
-    if (start) headerTicket.start = start;
     await headerTicket.save();
 
     return res.status(200).json(headerTicket);
@@ -137,7 +135,7 @@ app.patch("/ticket-info/:id", async (req, res) => {
 app.delete(`/ticket/:id`, async (req, res) => {
   try {
     const id = req.params.id;
-    await TicketHeader.deleteOne({ _id: id });
+    await QuestionAnswer.deleteOne({ _id: id });
     res.status(200).send();
   } catch (error) {}
 });
