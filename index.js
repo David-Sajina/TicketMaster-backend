@@ -108,7 +108,7 @@ app.get(`/questionanswer`, auth, async (req, res) => {
 app.get(`/questions/:user`, async (req, res) => {
 	try {
 		console.log(req.params);
-		let questions = await TicketHeader.find({ user: req.params.user });
+		let questions = await QuestionAnswer.find({ user: req.params.user });
 		res.send(questions);
 		console.log(questions);
 	} catch (error) {
