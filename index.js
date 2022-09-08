@@ -115,6 +115,16 @@ app.get(`/questions/:user`, async (req, res) => {
 		console.log(error);
 	}
 });
+app.get(`/q/:user`, async (req, res) => {
+	try {
+		console.log(req.params);
+		let questions = await Questions.find({ user: req.params.user });
+		res.send(questions);
+		console.log(questions);
+	} catch (error) {
+		console.log(error);
+	}
+});
 
 app.patch(`/ticket/:id`, async (req, res) => {
 	const { newQuestion, newAnswer } = req.body;
