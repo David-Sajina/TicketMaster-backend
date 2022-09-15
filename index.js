@@ -47,7 +47,7 @@ app.post(`/ticket`, async (req, res) => {
 	const { user, name, location } = req.body;
 	try {
 		let newTicket = new TicketHeader({
-			user: user.email,
+			user: user.username,
 			name,
 			location,
 		});
@@ -93,14 +93,14 @@ app.post(`/questionanswer`, async (req, res) => {
 
 app.get(`/ticket`, auth, async (req, res) => {
 	try {
-		let tickets = await TicketHeader.findOne({ user: req.user.email });
+		let tickets = await TicketHeader.findOne({ user: req.user.username });
 		res.send(tickets);
 	} catch (error) {}
 });
 
 app.get(`/questionanswer`, auth, async (req, res) => {
 	try {
-		let questionanswer = await QuestionAnswer.find({ user: req.user.email });
+		let questionanswer = await QuestionAnswer.find({ user: req.user.username });
 		res.send(questionanswer);
 	} catch (error) {}
 });
