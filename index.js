@@ -9,7 +9,7 @@ import auth from "./authMiddleware.js";
 import TicketHeader from "./models/TicketHeader.js";
 import QuestionAnswer from "./models/QuestionAnswer.js";
 import Questions from "./models/Questions.js";
-
+import nodemailer from "nodemailer";
 dotenv.config();
 
 const port = process.env.PORT || 5000;
@@ -253,6 +253,70 @@ app.post("/login", async (req, res) => {
 		console.log(error);
 		res.status(500).json({ error: "Server error" });
 	}
+});
+const transporter = nodemailer.createTransport({
+	service: "gmail",
+	auth: {
+		user: "dave.sajo123@gmail.com",
+		pass: process.env.APP_PASS,
+	},
+});
+app.post("/sendq", async (req, res) => {
+	// korisnik postavlja pitanje
+	const { user, email, question } = req.body;
+	try {
+		console.log(user);
+		let useremail = await User.findOne({ username: user });
+		console.log("username", useremail.email);
+		const combined_text =
+			"<b> Sent from email: </b>" + email + "<br>" + "<br>" + question;
+		const mailOptions = {
+			from: "dave.sajo123@gmail.com",
+			to: useremail.email,
+			subject: "New entry",
+			html: combined_text,
+		};
+		transporter.sendMail(mailOptions, function (error, info) {
+			if (error) {
+				console.log(error);
+				res.status(500).json({ msg: "Server Error" });
+			} else {
+				console.log("Email sent: " + info.response);
+				res.status(200).send();
+			}
+		});
+	} catch (error) {}
+});
+app.post("/senda", async (req, res) => {
+	// korisnik postavlja pitanje
+	const { user, email, question, answer } = req.body;
+	try {
+		console.log(user);
+		const combined_text =
+			user +
+			" replied to your question ' " +
+			question +
+			" '" +
+			"<br>" +
+			"<br>" +
+			"Answer: " +
+			answer;
+		const mailOptions = {
+			from: "dave.sajo123@gmail.com",
+			to: email,
+			subject: question,
+			html: combined_text,
+		};
+		transporter.sendMail(mailOptions, function (error, info) {
+			if (error) {
+				console.log(error);
+				res.status(500).json({ msg: "Server Error" });
+			} else {
+				console.log("Email sent: " + info.response);
+				res.status(200).send();
+			}
+		});
+	} catch (error) {}
 });
 
 app.listen(port, () => console.log(`Slušam zahtjeve http://localhost:${port}`));
