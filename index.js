@@ -318,5 +318,12 @@ app.post("/senda", async (req, res) => {
 		});
 	} catch (error) {}
 });
+app.delete(`/questiondelete/:id`, async (req, res) => {
+	try {
+		const id = req.params.id;
+		await Questions.deleteOne({ _id: id });
+		res.status(200).send();
+	} catch (error) {}
+});
 
 app.listen(port, () => console.log(`Slušam zahtjeve http://localhost:${port}`));
